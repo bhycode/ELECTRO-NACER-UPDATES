@@ -28,7 +28,7 @@
 $hostname = "localhost";
 $username = "root";
 $password = "";
-$database = "electro_nacer";
+$database = "electro_nacer_updates";
 
 $connection = new mysqli($hostname, $username, $password, $database);
 

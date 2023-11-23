@@ -1,15 +1,18 @@
-drop database electro_nacer;
-create database electro_nacer;
-use electro_nacer;
+drop database electro_nacer_updates;
+create database electro_nacer_updates;
+use electro_nacer_updates;
 
 
 create table User(
     userID varchar(50) PRIMARY KEY,
-    userPassword varchar(28) not null
+    email varchar(200) not null,
+    userPassword varchar(28) not null,
+    isAdmin boolean not null,
+    isActiveAccount boolean not null
 );
 describe User;
 
-insert into User(userID, userPassword) values('master', '123456789');
+insert into User(userID, email, userPassword, isAdmin, isActiveAccount) values('#1', 'master@gmail.com', '123456789', true, true);
 select * from User;
 
 
