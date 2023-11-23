@@ -1,0 +1,49 @@
+
+body {
+    background-color: black;
+}
+
+
+
+/* Login form */
+.login-form {
+    margin-top: 150px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.login-input-title {
+    font-size: 25px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: white;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
+/* Login input */
+.login-input {
+    height: 40px;
+    width: auto;
+    min-width: 500px;
+    margin-left: 10px;
+    padding-left: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-bottom: 2px solid white;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+/* Login button */
+.login-button {
+    width: 50%;
+    height: 50px;
+    border-radius: 3px;
+    margin: 10px;
+    padding: 10px 30px;
+    font-size: 25px;
+    font-weight: bold;
+    align-self: center;
+}

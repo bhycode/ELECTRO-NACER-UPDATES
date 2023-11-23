@@ -1,0 +1,5 @@
+
+
+document.getElementById("login-button").addEventListener("click", function() {
+    window.location.href = "home.html";
+});
