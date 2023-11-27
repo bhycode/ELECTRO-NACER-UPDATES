@@ -11,6 +11,9 @@
 
 <body>
 
+    
+
+
     <!-- LOGIN -->
     <div id="signin-div">
         <form method="post" class="login-form" style="margin-left: 300px; margin-right: 300px;">
@@ -50,6 +53,7 @@
         if (!$connection) {
             die("Connection failed: " . mysqli_connect_error());
         }
+
 
         // Check if the form is submitted
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -128,10 +132,6 @@
 
 
 <script src="assets/js/index.js"></script>
-
-<script>
-
-</script>
 </body>
 
 

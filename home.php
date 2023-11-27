@@ -14,6 +14,9 @@
 
 <body>
 
+
+
+
     <section class="top-section">
 
         <!-- Top title -->
@@ -43,6 +46,39 @@ if (!$connection) {
 $productsCategories = $connection->query("select * from ProductCategory;");
 $products = $connection->query("SELECT Product.productID, Product.imagePath, Product.label, Product.unitPrice, Product.minQuantity, Product.stockQuantity, Product.category, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID ORDER BY Product.categoryID_fk;");
 // Get data from database
+
+
+
+echo "<div id='users-dashboard'>";
+
+// Fetch users from the database
+$sql = "SELECT * FROM User";
+$result = $connection->query($sql);
+
+if ($result->num_rows > 0) {
+    echo "<table>";
+    echo "<tr><th>ID</th><th>Email</th><th>Password</th><th>Action</th></tr>";
+
+    // Output data of each row
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . $row["userID"] . "</td>";
+        echo "<td>" . $row["email"] . "</td>";
+        echo "<td>" . $row["userPassword"] . "</td>";
+        echo "<td>";
+        echo '<button class="btn btn-remove" onclick="removeUser(' . $row["userID"] . ')">Remove</button>';
+        echo '<button class="btn btn-activate" onclick="activateUser(' . $row["userID"] . ')">Activate</button>';
+        echo '<button class="btn btn-make-admin" onclick="makeAdmin(' . $row["userID"] . ')">Make Admin</button>';
+        echo "</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
+} else {
+    echo "0 results";
+}
+echo "</div>";
+echo "<br><br><br><br>";
 
 ?>
 
@@ -76,6 +112,8 @@ $products = $connection->query("SELECT Product.productID, Product.imagePath, Pro
 
 
 <?php
+
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the selected category from the form submission
@@ -134,7 +172,7 @@ function displayProducts($products)
     while ($product = $products->fetch_assoc()) {
         $imagePath = $product['imagePath'];
         $label = $product['label'];
-        $unitPrice = $product['unitPrice'];
+        $unitPrice = $product['buyingPrice'];
 
         // Display product card
         echo '<div class="products-catalog-card" style="background-image: url(\'assets/images/' . $imagePath . '\');">';
