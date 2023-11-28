@@ -48,6 +48,40 @@ $products = $connection->query("SELECT Product.productID, Product.imagePath, Pro
 // Get data from database
 
 
+function removeUser($userID) {
+
+    // Implement the logic to remove the user with the given ID
+    $sql = "DELETE FROM User WHERE userID = '$userID'";
+
+    if ($connection->query($sql) === TRUE) {
+        return "User removed successfully";
+    } else {
+        return "Error removing user: " . $connection->error;
+    }
+}
+
+function activateUser($userID) {
+    // Implement the logic to activate the user with the given ID
+    $sql = "UPDATE User SET isActiveAccount = 1 WHERE userID = '$userID'";
+    
+    if ($connection->query($sql) === TRUE) {
+        return "User activated successfully";
+    } else {
+        return "Error activating user: " . $connection->error;
+    }
+}
+
+
+function makeAdmin($userID) {
+    // Implement the logic to make the user with the given ID an admin
+    $sql = "UPDATE User SET isAdmin = 1 WHERE userID = '$userID'";
+    
+    if ($connection->query($sql) === TRUE) {
+        return "User made admin successfully";
+    } else {
+        return "Error making user admin: " . $connection->error;
+    }
+}
 
 echo "<div id='users-dashboard'>";
 
@@ -61,14 +95,15 @@ if ($result->num_rows > 0) {
 
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
+        $userID = $row["userID"];
         echo "<tr>";
         echo "<td>" . $row["userID"] . "</td>";
         echo "<td>" . $row["email"] . "</td>";
         echo "<td>" . $row["userPassword"] . "</td>";
         echo "<td>";
-        echo '<button class="btn btn-remove" onclick="removeUser(' . $row["userID"] . ')">Remove</button>';
-        echo '<button class="btn btn-activate" onclick="activateUser(' . $row["userID"] . ')">Activate</button>';
-        echo '<button class="btn btn-make-admin" onclick="makeAdmin(' . $row["userID"] . ')">Make Admin</button>';
+        echo '<button class="btn btn-remove" onclick="removeUser(\'' . $userID . '\')">Remove</button>';
+        echo '<button class="btn btn-activate" onclick="activateUser(\'' . $userID . '\')">Activate</button>';
+        echo '<button class="btn btn-make-admin" onclick="makeAdmin(\'' . $userID . '\')">Make Admin</button>';
         echo "</td>";
         echo "</tr>";
     }
@@ -79,6 +114,10 @@ if ($result->num_rows > 0) {
 }
 echo "</div>";
 echo "<br><br><br><br>";
+
+
+
+
 
 ?>
 

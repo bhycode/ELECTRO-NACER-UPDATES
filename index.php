@@ -64,14 +64,17 @@
                 // Get user input from the form
                 $loginEmail = $connection->real_escape_string($_POST['login_email']);
                 $loginPassword = $connection->real_escape_string($_POST['login_password']);
-
+                
                 // Query to check if the userId and password match in the User table
                 $query = "SELECT * FROM User WHERE email = '$loginEmail' AND userPassword = '$loginPassword'";
                 $result = $connection->query($query);
-
+                $userID = $connection->query("SELECT userID from User where email = '$loginEmail' AND userPassword = '$loginPassword'");
+                
                 // Check if any rows were returned
                 if ($result->num_rows > 0) {
-                    header("Location: home.php");
+                    echo '<script>alert("' . $userID . '");</script>';
+                    // header("Location: home.php");
+                    // header("Location: home.php?userID=" . $userID);
                     exit();
                 } else {
                     echo '<script>alert("Login failed. Please check your userId and password.");</script>';

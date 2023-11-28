@@ -21,15 +21,16 @@ select * from User;
 
 create table ProductCategory(
     categoryID varchar(50) PRIMARY KEY,
-    categoryName varchar(100) not null
+    categoryName varchar(100) not null,
+    categoryImage varchar(100)
 );
 describe ProductCategory;
 
-insert into ProductCategory(categoryID, categoryName) values('#1', 'Ungrouped');
-insert into ProductCategory(categoryID, categoryName) values('#2', 'Motor');
-insert into ProductCategory(categoryID, categoryName) values('#3', 'Cable');
-insert into ProductCategory(categoryID, categoryName) values('#4', 'Sensor');
-insert into ProductCategory(categoryID, categoryName) values('#5', 'Arduino');
+insert into ProductCategory(categoryID, categoryName) values('#1', 'Ungrouped', "");
+insert into ProductCategory(categoryID, categoryName) values('#2', 'Motor', "");
+insert into ProductCategory(categoryID, categoryName) values('#3', 'Cable', "");
+insert into ProductCategory(categoryID, categoryName) values('#4', 'Sensor', "");
+insert into ProductCategory(categoryID, categoryName) values('#5', 'Arduino', "");
 select * from ProductCategory;
 
 
