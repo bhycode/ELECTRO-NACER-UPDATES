@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>ELECTRO NACER</title>
     <meta name="description" content="An website for electronic pieces and Arduino.">

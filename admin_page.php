@@ -14,7 +14,17 @@
 
 <body>
 
-    
+
+<!-- Add Category Form with File Upload -->
+<h2>Add Category</h2>
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+    <label for="categoryName">Category Name:</label>
+    <input type="text" name="categoryName" required><br>
+    <label for="categoryImage">Category Image:</label>
+    <input type="file" name="categoryImage" accept="image/*" required><br>
+    <input type="submit" value="Add Category">
+</form>
+
 
 <!-- Connect to database and get data -->
 <?php
@@ -121,33 +131,59 @@ echo "<br><br><br><br>";
 
 
 
+// Handle file upload
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $categoryName = $_POST["categoryName"];
 
-// Function to add a new category
-function addCategory($categoryName, $categoryImage) {
-    $categoryID = uniqid(); // You can generate a unique ID using any method you prefer
-    $isActive = true;
+    $uploadDir = "assets/images/"; // Specify your upload directory
+    $uploadFile = $uploadDir . basename($_FILES["categoryImage"]["name"]);
 
-    $stmt = $conn->prepare("INSERT INTO ProductCategory (categoryID, categoryName, categoryImage, isActive) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $categoryID, $categoryName, $categoryImage, $isActive);
-
-    if ($stmt->execute()) {
-        echo "Category added successfully.";
+    if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $uploadFile)) {
+        addCategory($connection, $categoryName, $uploadFile);
     } else {
-        echo "Error adding category: " . $stmt->error;
+        echo "Error uploading file.";
     }
-
-    $stmt->close();
 }
 
-// Function to hide a category
-function hideCategory($categoryID) {
-    $stmt = $conn->prepare("UPDATE ProductCategory SET isActive = false WHERE categoryID = ?");
-    $stmt->bind_param("s", $categoryID);
 
-    if ($stmt->execute()) {
-        echo "Category hidden successfully.";
+// Function to add a new category
+function addCategory($connection, $categoryName, $categoryImage) {
+    // Assuming you have a $connection variable set up earlier using mysqli
+
+    // You can generate a unique ID using any method you prefer
+    $categoryID = uniqid();
+    $isActive = 1; // Assuming isActive is an integer field
+
+    // Use mysqli_real_escape_string to sanitize input (for demonstration purposes)
+
+    $query = "INSERT INTO ProductCategory (categoryID, categoryName, categoryImage, isActive) VALUES ('$categoryID', '$categoryName', '$categoryImage', $isActive)";
+
+    $result = $connection->query($query);
+
+    if ($result) {
+        $message = "Category added successfully.";
+        echo '<script>alert("' . $message . '");</script>';
     } else {
-        echo "Error hiding category: " . $stmt->error;
+        $errorMessage = "Error adding category: " . $connection->error;
+        echo '<script">alert("' . $errorMessage . '");</script>';
+    }
+
+    $idd = "656750ce57bfb";
+    hideCategory($connection, $idd);
+}
+
+
+// Function to hide a category
+function hideCategory($connection, $categoryID) {
+    
+    $result = $connection->query("UPDATE ProductCategory SET isActive = 0 WHERE categoryID = '$categoryID'");
+
+    if($result) {
+        $message = "Category modified successfully.";
+        echo '<script>alert("' . $message . '");</script>';
+    } else {
+        $errorMessage = "Error modify category: " . $connection->error;
+        echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
 }
@@ -157,6 +193,8 @@ function hideCategory($categoryID) {
 function modifyCategory($categoryID, $newCategoryName, $newCategoryImage) {
     $stmt = $conn->prepare("UPDATE ProductCategory SET categoryName = ?, categoryImage = ? WHERE categoryID = ?");
     $stmt->bind_param("sss", $newCategoryName, $newCategoryImage, $categoryID);
+
+    $result = $connection->query("UPDATE ProductCategory SET isActive = 0 WHERE categoryID = '$categoryID'");
 
     if ($stmt->execute()) {
         echo "Category modified successfully.";

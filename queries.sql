@@ -53,7 +53,7 @@ create table Product (
 
 describe Product;
 
-
+select ProductCategory.categoryName, Product.label from Product inner join ProductCategory on ProductCategory.categoryID = Product.categoryID_fk;
 INSERT INTO Product (productID, imagePath, barcode, label, full_description, minQuantity, stockQuantity, buyingPrice, finalPrice, offerPrice, categoryID_fk)
 VALUES
 ('#1', 'arduino-cable.jpg', '4587864481', 'Arduino Cable', 'Cable for Arduino boards of 5V.', 100, 215, 150.66, 215, 199.99, '#3'),
