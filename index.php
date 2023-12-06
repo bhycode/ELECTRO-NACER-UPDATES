@@ -72,8 +72,7 @@
                 // Check if any rows were returned
                 if ($result->num_rows > 0) {
                     echo '<script>alert("' . $userID . '");</script>';
-                    // header("Location: home.php");
-                    // header("Location: home.php?userID=" . $userID);
+                    header("Location: home.php");
                     exit();
                 } else {
                     echo '<script>alert("Login failed. Please check your userId and password.");</script>';
