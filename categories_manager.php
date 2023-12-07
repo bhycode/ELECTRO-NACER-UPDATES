@@ -15,7 +15,6 @@
 <body>
 
 
-<!-- Add Category Form with File Upload -->
 <h2>Add Category</h2>
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
     <label for="categoryName">Category Name:</label>
@@ -23,6 +22,18 @@
     <label for="categoryImage">Category Image:</label>
     <input type="file" name="categoryImage" accept="image/*" required><br>
     <input type="submit" value="Add Category">
+</form>
+
+
+<h2>Modify Category</h2>
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+    <label for="categoryId">Category ID:</label>
+    <input type="text" name="categoryId" required><br>
+    <label for="categoryName">Category Name:</label>
+    <input type="text" name="categoryName" required><br>
+    <label for="categoryImage">Category Image:</label>
+    <input type="file" name="categoryImage" accept="image/*" required><br>
+    <input type="submit" value="Update Category">
 </form>
 
 
@@ -42,21 +53,44 @@ if (!$connection) {
 }
 
 
-showCategories($connection);
+
 
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $categoryName = $_POST["categoryName"];
 
-    $uploadDir = "assets/images/"; // Specify your upload directory
-    $uploadFile = $uploadDir . basename($_FILES["categoryImage"]["name"]);
 
-    if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $uploadFile)) {
-        addCategory($connection, $categoryName, $uploadFile);
-        showCategories($connection);
+    if(isset($_POST["categoryName"])) {
+        $categoryName = $_POST["categoryName"];
+
+        $uploadDir = "assets/images/"; // Specify your upload directory
+        $uploadFile = $uploadDir . basename($_FILES["categoryImage"]["name"]);
+
+        if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $uploadFile)) {
+            addCategory($connection, $categoryName, $uploadFile);
+            showCategories($connection);
+        }
+
     } else {
-        echo "Error uploading file.";
+        showCategories($connection);
     }
+    
+    if(isset($_POST["categoryId"])) {
+
+        $categoryId = $_POST["categoryId"];
+        $newCategoryName = $_POST["categoryName"];
+
+        $uploadDir = "assets/images/"; // Specify your upload directory
+        $uploadFile = $uploadDir . basename($_FILES["categoryImage"]["name"]);
+
+        if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $uploadFile)) {
+            modifyCategory($categoryID, $newCategoryName, $uploadFile);
+            showCategories($connection);
+        }
+    }
+
+    
+
+
 }
 
 
@@ -119,6 +153,9 @@ function modifyCategory($categoryID, $newCategoryName, $newCategoryImage) {
     $stmt->close();
 }
 
+function removeCategory($connection, $categoryID) {
+    $connection->query("DELETE FROM ProductCategory WHERE categoryId = $categoryID;");
+}
 
 
 function showCategories($connection) {
@@ -132,6 +169,8 @@ function showCategories($connection) {
                     <th scope="col">Category Name</th>
                     <th scope="col">Category Image</th>
                     <th scope="col">Is Active</th>
+                    <th scope="col">Hide</th>
+                    <th scope="col">Remove</th>
                 </tr>
             </thead>
             <tbody>';
@@ -142,7 +181,8 @@ function showCategories($connection) {
                 <td>' . $category['categoryName'] . '</td>
                 <td><img src="' . $category['categoryImage'] . '" alt="Category Image" style="max-width: 100px; max-height: 100px;"></td>
                 <td>' . ($category['isActive'] ? 'Yes' : 'No') . '</td>
-              </tr>';
+                <td><button onclick="hideCategory(' . $connection . ',' . $category['categoryID'] . ');">Hide</button></td>
+                </tr>';
     }
 
     echo '</tbody></table>';
