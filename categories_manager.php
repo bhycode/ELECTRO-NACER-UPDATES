@@ -82,8 +82,7 @@ function addCategory($connection, $categoryName, $categoryImage) {
         echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
-    $idd = "656750ce57bfb";
-    hideCategory($connection, $idd);
+    
 }
 
 
@@ -147,6 +146,9 @@ function showCategories($connection) {
 
     echo '</tbody></table>';
 }
+
+
+
 
 
 

@@ -69,9 +69,15 @@
                 $result = $connection->query($query);
                 $userID = $connection->query("SELECT userID from User where email = '$loginEmail' AND userPassword = '$loginPassword'");
                 
+                session_start();
+                $_SESSION["current_id"] = $userID;
+                $_SESSION["current_email"] = $_POST['login_email'];
+                $_SESSION["current_password"] = $_POST['login_password'];
+                
                 // Check if any rows were returned
                 if ($result->num_rows > 0) {
                     echo '<script>alert("' . $userID . '");</script>';
+            
                     header("Location: home.php");
                     exit();
                 } else {
