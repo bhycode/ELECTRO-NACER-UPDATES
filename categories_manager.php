@@ -116,8 +116,6 @@ function addCategory($connection, $categoryName, $categoryImage) {
         echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
-    $idd = "656750ce57bfb";
-    hideCategory($connection, $idd);
 }
 
 
@@ -175,15 +173,19 @@ function showCategories($connection) {
             </thead>
             <tbody>';
 
-    while ($category = $categoriesList->fetch_assoc()) {
-        echo '<tr>
-                <td>' . $category['categoryID'] . '</td>
-                <td>' . $category['categoryName'] . '</td>
-                <td><img src="' . $category['categoryImage'] . '" alt="Category Image" style="max-width: 100px; max-height: 100px;"></td>
-                <td>' . ($category['isActive'] ? 'Yes' : 'No') . '</td>
-                <td><button onclick="hideCategory(' . $connection . ',' . $category['categoryID'] . ');">Hide</button></td>
-                </tr>';
-    }
+            while ($category = $categoriesList->fetch_assoc()) {
+                echo '<tr>
+                        <td>' . $category['categoryID'] . '</td>
+                        <td>' . $category['categoryName'] . '</td>
+                        <td><img src="' . $category['categoryImage'] . '" alt="Category Image" style="max-width: 100px; max-height: 100px;"></td>
+                        <td>' . ($category['isActive'] ? 'Yes' : 'No') . '</td>
+                        <td>
+                        <button onclick="hideCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
+                        <button onclick="removeCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
+                        </td>
+                      </tr>';
+            }
+            
 
     echo '</tbody></table>';
 }
