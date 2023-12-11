@@ -33,11 +33,12 @@ $username = "root";
 $password = "";
 $database = "electro_nacer_updates";
 
+session_start();
+
 $connection = new mysqli($hostname, $username, $password, $database);
 
 
-
-if (!$connection) {
+if (!$connection && isset($_SESSION["currect_id"])) {
     die("Connection failed: " . mysqli_connect_error());
 }
 

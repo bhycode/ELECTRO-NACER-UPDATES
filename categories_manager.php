@@ -116,6 +116,10 @@ function addCategory($connection, $categoryName, $categoryImage) {
         echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
+<<<<<<< HEAD
+=======
+    
+>>>>>>> c0841557c1919778e410a7b955b5a2166a0bb252
 }
 
 
@@ -189,6 +193,9 @@ function showCategories($connection) {
 
     echo '</tbody></table>';
 }
+
+
+
 
 
 
