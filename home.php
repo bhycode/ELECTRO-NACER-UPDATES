@@ -9,10 +9,27 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="assets/css/home.css">
+    
 </head>
 
 
 <body>
+
+
+
+    <!--Header-->
+    <header>
+
+        <nav class="header-nav">
+
+            <a class="active" href="home.php">Home</a>
+            <a href="products_manager.php">Products manager</a>
+            <a href="categories_manager.php">Categories manager</a>
+
+        </nav>
+
+    </header>
+    <!--Header-->
 
 
 

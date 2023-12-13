@@ -116,10 +116,6 @@ function addCategory($connection, $categoryName, $categoryImage) {
         echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
-<<<<<<< HEAD
-=======
-    
->>>>>>> c0841557c1919778e410a7b955b5a2166a0bb252
 }
 
 
@@ -167,12 +163,12 @@ function showCategories($connection) {
     echo '<table class="table" style="margin-top: 50px;">
             <thead>
                 <tr>
-                    <th scope="col">Category ID</th>
-                    <th scope="col">Category Name</th>
-                    <th scope="col">Category Image</th>
-                    <th scope="col">Is Active</th>
-                    <th scope="col">Hide</th>
-                    <th scope="col">Remove</th>
+                    <th>Category ID</th>
+                    <th >Category Name</th>
+                    <th >Category Image</th>
+                    <th >Is Active</th>
+                    <th >Hide</th>
+                    <th >Remove</th>
                 </tr>
             </thead>
             <tbody>';

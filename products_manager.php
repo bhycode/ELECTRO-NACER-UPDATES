@@ -78,22 +78,28 @@ $products = $connection->query("SELECT * FROM Product;");
 
 showProducts($connection, $products);
 
+function hi() {
+    echo "<script>alert('hi');</script>";
+}
+
 function showProducts($connection, $productsList) {
 
     echo '<table class="table" style="margin-top: 50px;">
             <thead>
                 <tr>
-                    <th scope="col">Product ID</th>
-                    <th scope="col">Product Image</th>
-                    <th scope="col">Barcode</th>
-                    <th scope="col">Label</th>
-                    <th scope="col">Full Description</th>
-                    <th scope="col">Min Quantity</th>
-                    <th scope="col">Stock Quantity</th>
-                    <th scope="col">Buying Price</th>
-                    <th scope="col">Final Price</th>
-                    <th scope="col">Offer Price</th>
-                    <th scope="col">Category ID</th>
+                    <th >Product ID</th>
+                    <th >Product Image</th>
+                    <th >Barcode</th>
+                    <th >Label</th>
+                    <th >Full Description</th>
+                    <th >Min Quantity</th>
+                    <th >Stock Quantity</th>
+                    <th >Buying Price</th>
+                    <th >Final Price</th>
+                    <th >Offer Price</th>
+                    <th >Category ID</th>
+                    <th >Is Active</th>
+                    <th >Hide</th>
                 </tr>
             </thead>
             <tbody>';
@@ -111,12 +117,20 @@ function showProducts($connection, $productsList) {
                 <td>' . $product['finalPrice'] . '</td>
                 <td>' . ($product['offerPrice'] ?: '-') . '</td>
                 <td>' . $product['categoryID_fk'] . '</td>
+                <td>' . ($product['isActive'] ? "Yes":"No") . '</td>
+                <td>
+                    <a class = "button_a" href="products_manager.php?hide_product_id=' . $product['productID'] . '">Hide</a>
+                </td>
               </tr>';
     }
 
     echo '</tbody></table>';
 
 }
+
+
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assuming your form fields have names like the ones in the HTML form
@@ -134,6 +148,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     addProduct($connection, $productData);
+}
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+    if(isset($_GET['hide_product_id'])) {
+
+        $id = $_GET['hide_product_id'];
+
+        $result = mysqli_query($connection, "UPDATE Product SET isActive = false WHERE productID = '$id' and isActive = true;");
+        
+        
+        if(isset($_GET['hide_product_id'])) {
+            header('Refresh: 1; url=products_manager.php');
+        }
+        
+        
+    }
 }
 
 
