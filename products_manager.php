@@ -70,8 +70,8 @@
     <!-- Update Product Form with File Upload -->
     <h2 style = "margin_top=50px">Update Product</h2>
     <form method="post">
-        <label for="productId">Product id:</label>
-        <input type="text" name="productId" required><br>
+        <label for="productID">Product id:</label>
+        <input type="text" name="productID" required><br>
         <label for="imagePath">Product Image:</label>
         <input type="file" name="imagePath" accept="image/*" required><br>
         <label for="barcode">Barcode:</label>
@@ -178,11 +178,11 @@ function showProducts($connection, $productsList) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if(isset($_POST['productId'])) {
+    if(isset($_POST['productID'])) {
 
         // Assuming your form fields have names like the ones in the HTML form
         $productData = [
-            'productID' => $_POST['productId'],
+            'productID' => $_POST['productID'],
             'imagePath' => $_FILES['imagePath']['name'], // Assuming imagePath is the name attribute for the file input
             'barcode' => $_POST['barcode'],
             'label' => $_POST['label'],
@@ -287,10 +287,24 @@ function updateProduct($connection, $productData) {
     $categoryID_fk = mysqli_real_escape_string($connection, $productData['categoryID_fk']);
 
     // SQL query to insert data into the Product table
-    $query = "INSERT INTO Product (productID, imagePath, barcode, label, full_description, minQuantity, stockQuantity, buyingPrice, finalPrice, offerPrice, categoryID_fk)
-              VALUES ('$productID', '$imagePath', '$barcode', '$label', '$fullDescription', $minQuantity, $stockQuantity, $buyingPrice, $finalPrice, ";
-    $query .= $offerPrice ? "$offerPrice, " : "NULL, ";
-    $query .= "'$categoryID_fk')";
+    // $query = "INSERT INTO Product (productID, imagePath, barcode, label, full_description, minQuantity, stockQuantity, buyingPrice, finalPrice, offerPrice, categoryID_fk)
+    //           VALUES ('$productID', '$imagePath', '$barcode', '$label', '$fullDescription', $minQuantity, $stockQuantity, $buyingPrice, $finalPrice, ";
+    // $query .= $offerPrice ? "$offerPrice, " : "NULL, ";
+    // $query .= "'$categoryID_fk')";
+
+    $query = "UPDATE Product SET 
+    imagePath = '$imagePath',
+    barcode = '$barcode',
+    label = '$label',
+    full_description = '$fullDescription',
+    minQuantity = $minQuantity,
+    stockQuantity = $stockQuantity,
+    buyingPrice = $buyingPrice,
+    finalPrice = $finalPrice,
+    offerPrice = " . ($offerPrice !== null ? $offerPrice : "NULL") . ",
+    categoryID_fk = '$categoryID_fk'
+WHERE productID = '$productID'";
+
 
     // Execute the query
     $result = $connection->query($query);
