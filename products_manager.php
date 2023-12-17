@@ -105,7 +105,6 @@ $username = "root";
 $password = "";
 $database = "electro_nacer_updates";
 
-session_start();
 
 $connection = new mysqli($hostname, $username, $password, $database);
 

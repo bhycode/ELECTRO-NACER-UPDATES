@@ -72,8 +72,8 @@ if (!$connection) {
 session_start();
 
 if(!isset($_SESSION["current_id"])) {
-        header("Location: index.php");
-        exit;
+    header("Location: index.php");
+    exit;
 }
 
 // Handle file upload
@@ -109,11 +109,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    
 
-
+} else {
+    showCategories($connection);
 }
 
+
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+    if(isset($_GET['hide_category_id'])) {
+
+        $id = $_GET['hide_category_id'];
+
+        $result = mysqli_query($connection, "UPDATE ProductCategory SET isActive = false WHERE categoryID = '$id' and isActive = true;");
+        
+        
+        if(isset($_GET['hide_category_id'])) {
+            header('Refresh: 1; url=categories_manager.php');
+        }
+        
+        
+    }
+}
 
 // Function to add a new category
 function addCategory($connection, $categoryName, $categoryImage) {
@@ -200,10 +218,9 @@ function showCategories($connection) {
                         <td>' . $category['categoryName'] . '</td>
                         <td><img src="' . $category['categoryImage'] . '" alt="Category Image" style="max-width: 100px; max-height: 100px;"></td>
                         <td>' . ($category['isActive'] ? 'Yes' : 'No') . '</td>
-                        // <td>
-                        // <button onclick="hideCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
-                        // <button onclick="removeCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
-                        // </td>
+                        <td>
+                            <a class = "button_a" href="categories_manager.php?hide_category_id=' . $category['categoryID'] . '">Hide</a>
+                        </td>
                       </tr>';
             }
             
