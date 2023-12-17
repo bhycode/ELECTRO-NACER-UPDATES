@@ -15,7 +15,24 @@
 <body>
 
 
-<h2>Add Category</h2>
+    <!--Header-->
+    <header>
+
+        <nav class="header-nav">
+
+        <a href="home.php">Home</a>
+        <a href="admin_page.php">Users manager</a>
+        <a href="products_manager.php">Products manager</a>
+        <a class="active" href="categories_manager.php">Categories manager</a>
+
+        </nav>
+
+    </header>
+    <!--Header-->
+
+    
+
+<h2 style="margin-top: 100px;">Add Category</h2>
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
     <label for="categoryName">Category Name:</label>
     <input type="text" name="categoryName" required><br>
@@ -52,8 +69,12 @@ if (!$connection) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
+session_start();
 
-
+if(!isset($_SESSION["current_id"])) {
+        header("Location: index.php");
+        exit;
+}
 
 // Handle file upload
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -179,10 +200,10 @@ function showCategories($connection) {
                         <td>' . $category['categoryName'] . '</td>
                         <td><img src="' . $category['categoryImage'] . '" alt="Category Image" style="max-width: 100px; max-height: 100px;"></td>
                         <td>' . ($category['isActive'] ? 'Yes' : 'No') . '</td>
-                        <td>
-                        <button onclick="hideCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
-                        <button onclick="removeCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
-                        </td>
+                        // <td>
+                        // <button onclick="hideCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
+                        // <button onclick="removeCategory(' . $connection . ', ' . $category['categoryID'] . ')">Remove</button>
+                        // </td>
                       </tr>';
             }
             

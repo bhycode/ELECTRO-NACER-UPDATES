@@ -14,16 +14,23 @@
 
 <body>
 
+    <!--Header-->
+    <header>
 
-<!-- Add Category Form with File Upload -->
-<h2>Add Category</h2>
-<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
-    <label for="categoryName">Category Name:</label>
-    <input type="text" name="categoryName" required><br>
-    <label for="categoryImage">Category Image:</label>
-    <input type="file" name="categoryImage" accept="image/*" required><br>
-    <input type="submit" value="Add Category">
-</form>
+        <nav class="header-nav">
+
+            <a href="home.php">Home</a>
+            <a class="active" href="admin_page.php">Users manager</a>
+            <a href="products_manager.php">Products manager</a>
+            <a href="categories_manager.php">Categories manager</a>
+
+        </nav>
+
+    </header>
+    <!--Header-->
+
+
+    <h2 style="margin-top: 100px;">Users</h2>
 
 
 <!-- Connect to database and get data -->
@@ -41,6 +48,12 @@ if (!$connection) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
+session_start();
+
+if(!isset($_SESSION["current_id"])) {
+        header("Location: index.php");
+        exit;
+}
 
 function removeUser($userID) {
 
@@ -85,7 +98,7 @@ $result = $connection->query($sql);
 
 if ($result->num_rows > 0) {
     echo "<table>";
-    echo "<tr><th>ID</th><th>Email</th><th>Password</th><th>Action</th></tr>";
+    echo "<tr><th>ID</th><th>Email</th><th>Password</th><th>Remove user</th><th>Acitvate account</th><th>Make it admin</th></tr>";
 
     // Output data of each row
     while ($row = $result->fetch_assoc()) {
@@ -94,26 +107,43 @@ if ($result->num_rows > 0) {
         echo "<td>" . $row["userID"] . "</td>";
         echo "<td>" . $row["email"] . "</td>";
         echo "<td>" . $row["userPassword"] . "</td>";
-        echo "<td>";
 
 
         // Show Remove button for all users
         if(!$row["isAdmin"]) {
-            echo '<button class="btn btn-remove" onclick="removeUser(\'' . $userID . '\')">Remove</button>';
+            echo "<td>";
+            echo '<a href= "admin_page.php?removeuser='.$row["userID"].'" class="button_a" style="color: black;">Remove</a>';
+            echo "</td>";
+        } else {
+            echo "<td>";
+            echo '<a class="button_a" style="color: black;">Remove</a>';
+            echo "</td>";
         }
         
 
         // Show Activate button only for inactive users
         if (!$row["isActiveAccount"]) {
-            echo '<button class="btn btn-activate" onclick="activateUser(\'' . $userID . '\')">Activate</button>';
+            echo "<td>";
+            echo '<a href="admin_page.php?activateaccount='.$row["userID"].'" class="button_a" style="color: black;">Activate</a>';
+            echo "</td>";
+        } else {
+            echo "<td>";
+            echo '<a class="button_a" style="color: black;">Activate</a>';
+            echo "</td>";
         }
 
         // Show Make Admin button only for non-admin users
         if (!$row["isAdmin"]) {
-            echo '<button class="btn btn-make-admin" onclick="makeAdmin(\'' . $userID . '\')">Make Admin</button>';
+            echo "<td>";
+            echo '<a href="admin_page.php?makeitadmin='.$row["userID"].'" class="button_a" style="color: black;">Make admin</a>';
+            echo "</td>";
+        } else {
+            echo "<td>";
+            echo '<a class="button_a" style="color: black;">Make admin</a>';
+            echo "</td>";
         }
 
-        echo "</td>";
+
         echo "</tr>";
     }
 
@@ -125,86 +155,43 @@ echo "</div>";
 echo "<br><br><br><br>";
 
 
+if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
+    if(isset($_GET['removeuser'])) {
 
+        $id = $_GET['removeuser'];
+        $sql = "DELETE FROM User WHERE userID = '$id'";
 
+        if ($connection->query($sql) === TRUE) {
+            echo "<script>location.reload();</script>";
+        } else {
+            echo "Error removing user: " . $connection->error;
+        }
 
-
-
-// Handle file upload
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $categoryName = $_POST["categoryName"];
-
-    $uploadDir = "assets/images/"; // Specify your upload directory
-    $uploadFile = $uploadDir . basename($_FILES["categoryImage"]["name"]);
-
-    if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $uploadFile)) {
-        addCategory($connection, $categoryName, $uploadFile);
-    } else {
-        echo "Error uploading file.";
-    }
-}
-
-
-// Function to add a new category
-function addCategory($connection, $categoryName, $categoryImage) {
-    // Assuming you have a $connection variable set up earlier using mysqli
-
-    // You can generate a unique ID using any method you prefer
-    $categoryID = uniqid();
-    $isActive = 1; // Assuming isActive is an integer field
-
-    // Use mysqli_real_escape_string to sanitize input (for demonstration purposes)
-
-    $query = "INSERT INTO ProductCategory (categoryID, categoryName, categoryImage, isActive) VALUES ('$categoryID', '$categoryName', '$categoryImage', $isActive)";
-
-    $result = $connection->query($query);
-
-    if ($result) {
-        $message = "Category added successfully.";
-        echo '<script>alert("' . $message . '");</script>';
-    } else {
-        $errorMessage = "Error adding category: " . $connection->error;
-        echo '<script">alert("' . $errorMessage . '");</script>';
     }
 
-    $idd = "656750ce57bfb";
-    hideCategory($connection, $idd);
-}
-
-
-// Function to hide a category
-function hideCategory($connection, $categoryID) {
+    if(isset($_GET['activateaccount'])) {
+        $id = $_GET['activateaccount'];
+        $sql = "UPDATE User SET isActiveAccount = 1 WHERE userID = '$id'";
     
-    $result = $connection->query("UPDATE ProductCategory SET isActive = 0 WHERE categoryID = '$categoryID'");
-
-    if($result) {
-        $message = "Category modified successfully.";
-        echo '<script>alert("' . $message . '");</script>';
-    } else {
-        $errorMessage = "Error modify category: " . $connection->error;
-        echo '<script">alert("' . $errorMessage . '");</script>';
+        if ($connection->query($sql) === TRUE) {
+            echo "<script>location.reload();</script>";
+        } else {
+            echo "Error activating user: " . $connection->error;
+        }
     }
 
-}
-
-
-// Function to modify a category
-function modifyCategory($categoryID, $newCategoryName, $newCategoryImage) {
-    $stmt = $conn->prepare("UPDATE ProductCategory SET categoryName = ?, categoryImage = ? WHERE categoryID = ?");
-    $stmt->bind_param("sss", $newCategoryName, $newCategoryImage, $categoryID);
-
-    $result = $connection->query("UPDATE ProductCategory SET isActive = 0 WHERE categoryID = '$categoryID'");
-
-    if ($stmt->execute()) {
-        echo "Category modified successfully.";
-    } else {
-        echo "Error modifying category: " . $stmt->error;
+    if(isset($_GET['makeitadmin'])) {
+        $id = $_GET['makeitadmin'];
+        $sql = "UPDATE User SET isAdmin = 1 WHERE userID = '$id'";
+    
+        if ($connection->query($sql) === TRUE) {
+            echo "<script>location.reload();</script>";
+        } else {
+            echo "Error making user admin: " . $connection->error;
+        }
     }
-
-    $stmt->close();
 }
-
 
 
 

@@ -12,7 +12,7 @@ create table User(
 );
 describe User;
 
-insert into User(userID, email, userPassword, isAdmin, isActiveAccount) values('#1', 'master@gmail.com', '123456789', true, true);
+insert into User(userID, email, userPassword, isAdmin, isActiveAccount) values('id1', 'master@gmail.com', '123456789', true, true);
 select * from User;
 
 
@@ -81,3 +81,7 @@ select * from Product;
 SELECT Product.productID, Product.imagePath, Product.label, Product.unitPrice, Product.minQuantity, Product.stockQuantity, Product.category, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID and ProductCategory.categoryName = 'Arduino';
 
 SELECT * from Product where stockQuantity < minQuantity;
+
+
+
+SELECT Product.productID, Product.imagePath, Product.label, Product.buyingPrice, Product.minQuantity, Product.stockQuantity, Product.categoryID_fk, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID WHERE Product.isActive = true ORDER BY Product.categoryID_fk;

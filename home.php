@@ -23,6 +23,7 @@
         <nav class="header-nav">
 
             <a class="active" href="home.php">Home</a>
+            <a href="admin_page.php">Users manager</a>
             <a href="products_manager.php">Products manager</a>
             <a href="categories_manager.php">Categories manager</a>
 
@@ -50,89 +51,34 @@ $username = "root";
 $password = "";
 $database = "electro_nacer_updates";
 
-session_start();
 
 $connection = new mysqli($hostname, $username, $password, $database);
 
 
-if (!$connection && isset($_SESSION["currect_id"])) {
+if (!$connection) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
 
+
+session_start();
+
+if(!isset($_SESSION["current_id"])) {
+        header("Location: index.php");
+        exit;
+}
+
+
+// We have bug that make me can't able to get data from session
+// if(isset($_SESSION["current_id"])) {
+//     echo $_SESSION["current_id"];
+// }
+
+
 // Get data from database
-$productsCategories = $connection->query("select * from ProductCategory;");
-$products = $connection->query("SELECT Product.productID, Product.imagePath, Product.label, Product.unitPrice, Product.minQuantity, Product.stockQuantity, Product.category, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID ORDER BY Product.categoryID_fk;");
+$productsCategories = $connection->query("SELECT * from ProductCategory WHERE isActive = true;");
+$products = $connection->query("SELECT Product.productID, Product.imagePath, Product.label, Product.buyingPrice, Product.minQuantity, Product.stockQuantity, Product.categoryID_fk, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID WHERE Product.isActive = true ORDER BY Product.categoryID_fk;");
 // Get data from database
-
-
-function removeUser($userID) {
-
-    // Implement the logic to remove the user with the given ID
-    $sql = "DELETE FROM User WHERE userID = '$userID'";
-
-    if ($connection->query($sql) === TRUE) {
-        return "User removed successfully";
-    } else {
-        return "Error removing user: " . $connection->error;
-    }
-}
-
-function activateUser($userID) {
-    // Implement the logic to activate the user with the given ID
-    $sql = "UPDATE User SET isActiveAccount = 1 WHERE userID = '$userID'";
-    
-    if ($connection->query($sql) === TRUE) {
-        return "User activated successfully";
-    } else {
-        return "Error activating user: " . $connection->error;
-    }
-}
-
-
-function makeAdmin($userID) {
-    // Implement the logic to make the user with the given ID an admin
-    $sql = "UPDATE User SET isAdmin = 1 WHERE userID = '$userID'";
-    
-    if ($connection->query($sql) === TRUE) {
-        return "User made admin successfully";
-    } else {
-        return "Error making user admin: " . $connection->error;
-    }
-}
-
-echo "<div id='users-dashboard'>";
-
-// Fetch users from the database
-$sql = "SELECT * FROM User";
-$result = $connection->query($sql);
-
-if ($result->num_rows > 0) {
-    echo "<table>";
-    echo "<tr><th>ID</th><th>Email</th><th>Password</th><th>Action</th></tr>";
-
-    // Output data of each row
-    while ($row = $result->fetch_assoc()) {
-        $userID = $row["userID"];
-        echo "<tr>";
-        echo "<td>" . $row["userID"] . "</td>";
-        echo "<td>" . $row["email"] . "</td>";
-        echo "<td>" . $row["userPassword"] . "</td>";
-        echo "<td>";
-        echo '<button class="btn btn-remove" onclick="removeUser(\'' . $userID . '\')">Remove</button>';
-        echo '<button class="btn btn-activate" onclick="activateUser(\'' . $userID . '\')">Activate</button>';
-        echo '<button class="btn btn-make-admin" onclick="makeAdmin(\'' . $userID . '\')">Make Admin</button>';
-        echo "</td>";
-        echo "</tr>";
-    }
-
-    echo "</table>";
-} else {
-    echo "0 results";
-}
-echo "</div>";
-echo "<br><br><br><br>";
-
 
 
 
@@ -179,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Filter data by quantity
     if (isset($_POST["end-soon-products"])) {
 
-        $filteredProductsByQuantity = $connection->query("SELECT * from Product where stockQuantity < minQuantity;");
+        $filteredProductsByQuantity = $connection->query("SELECT * from Product where stockQuantity < minQuantity and isActive = true;");
 
 
         displayProducts($filteredProductsByQuantity);
@@ -194,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             displayProducts($products);
         } else {
             // Fetch products based on the selected category
-            $filteredProducts = $connection->query("SELECT Product.productID, Product.imagePath, Product.label, Product.unitPrice, Product.minQuantity, Product.stockQuantity, Product.category, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID and ProductCategory.categoryName = '$selectedCategory';");
+            $filteredProducts = $connection->query("SELECT Product.productID, Product.imagePath, Product.label, Product.buyingPrice, Product.minQuantity, Product.stockQuantity, Product.categoryID_fk, ProductCategory.categoryName FROM Product JOIN ProductCategory ON Product.categoryID_fk = ProductCategory.categoryID and ProductCategory.categoryName = '$selectedCategory';");
             // Call the function to display filtered products
             displayProducts($filteredProducts);
         }
@@ -232,7 +178,7 @@ function displayProducts($products)
         $unitPrice = $product['buyingPrice'];
 
         // Display product card
-        echo '<div class="products-catalog-card" style="background-image: url(\'assets/images/' . $imagePath . '\');">';
+        echo '<div class="products-catalog-card" style="background-image: url(\'' . $imagePath . '\');">';
         echo '<p>' . $label . '</p>';
         echo '<p>' . $unitPrice . ' DH</p>';
 

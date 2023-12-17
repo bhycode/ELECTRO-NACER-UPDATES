@@ -60,15 +60,17 @@
             // LOGIN
             // Check if email and password are set
             if (isset($_POST['login_email'], $_POST['login_password'])) {
+
                 // Get user input from the form
                 $loginEmail = $connection->real_escape_string($_POST['login_email']);
                 $loginPassword = $connection->real_escape_string($_POST['login_password']);
-                
+
                 // Query to check if the userId and password match in the User table
                 $query = "SELECT * FROM User WHERE email = '$loginEmail' AND userPassword = '$loginPassword'";
                 $result = $connection->query($query);
                 $userID = $connection->query("SELECT userID from User where email = '$loginEmail' AND userPassword = '$loginPassword'");
-                
+                echo "<script>alert('hhh');</script>";
+
                 session_start();
                 $_SESSION["current_id"] = $userID;
                 $_SESSION["current_email"] = $_POST['login_email'];
@@ -76,7 +78,6 @@
                 
                 // Check if any rows were returned
                 if ($result->num_rows > 0) {
-                    echo '<script>alert("' . $userID . '");</script>';
             
                     header("Location: home.php");
                     exit();

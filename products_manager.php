@@ -15,6 +15,20 @@
 <body>
 
 
+    <!--Header-->
+    <header>
+
+        <nav class="header-nav">
+
+        <a href="home.php">Home</a>
+        <a href="admin_page.php">Users manager</a>
+        <a class="active" href="products_manager.php">Products manager</a>
+        <a href="categories_manager.php">Categories manager</a>
+
+        </nav>
+
+    </header>
+    <!--Header-->
 
 
     <section class="top-section">
@@ -27,7 +41,7 @@
     
 
     <!-- Add Product Form with File Upload -->
-    <h2>Add Product</h2>
+    <h2 style = "margin_top=50px">Add Product</h2>
     <form method="post">
         <label for="imagePath">Product Image:</label>
         <input type="file" name="imagePath" accept="image/*" required><br>
@@ -53,6 +67,35 @@
     </form>
 
 
+    <!-- Update Product Form with File Upload -->
+    <h2 style = "margin_top=50px">Update Product</h2>
+    <form method="post">
+        <label for="productId">Product id:</label>
+        <input type="text" name="productId" required><br>
+        <label for="imagePath">Product Image:</label>
+        <input type="file" name="imagePath" accept="image/*" required><br>
+        <label for="barcode">Barcode:</label>
+        <input type="text" name="barcode" required><br>
+        <label for="label">Label:</label>
+        <input type="text" name="label" required><br>
+        <label for="fullDescription">Full Description:</label>
+        <input type="text" name="fullDescription" required><br>
+        <label for="minQuantity">Minimum Quantity:</label>
+        <input type="number" name="minQuantity" step="any" required><br>
+        <label for="stockQuantity">Stock Quantity:</label>
+        <input type="number" name="stockQuantity" required><br>
+        <label for="buyingPrice">Buying Price:</label>
+        <input type="number" name="buyingPrice" step="any" required><br>
+        <label for="finalPrice">Final Price:</label>
+        <input type="number" name="finalPrice" step="any" required><br>
+        <label for="offerPrice">Offer Price:</label>
+        <input type="number" name="offerPrice" step="any"><br>
+        <label for="categoryID_fk">Category ID:</label>
+        <input type="text" name="categoryID_fk" required><br>
+        <input type="submit" value="Update Product">
+    </form>
+
+
 
 
 <!-- Connect to database and get data -->
@@ -72,15 +115,17 @@ if (!$connection && isset($_SESSION["currect_id"])) {
 }
 
 
+session_start();
+if(!isset($_SESSION["current_id"])) {
+        header("Location: index.php");
+        exit;
+}
+
 // Get data from database
 $products = $connection->query("SELECT * FROM Product;");
 // Get data from database
 
 showProducts($connection, $products);
-
-function hi() {
-    echo "<script>alert('hi');</script>";
-}
 
 function showProducts($connection, $productsList) {
 
@@ -133,21 +178,45 @@ function showProducts($connection, $productsList) {
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Assuming your form fields have names like the ones in the HTML form
-    $productData = [
-        'imagePath' => $_FILES['imagePath']['name'], // Assuming imagePath is the name attribute for the file input
-        'barcode' => $_POST['barcode'],
-        'label' => $_POST['label'],
-        'fullDescription' => $_POST['fullDescription'],
-        'minQuantity' => $_POST['minQuantity'],
-        'stockQuantity' => $_POST['stockQuantity'],
-        'buyingPrice' => $_POST['buyingPrice'],
-        'finalPrice' => $_POST['finalPrice'],
-        'offerPrice' => $_POST['offerPrice'],
-        'categoryID_fk' => $_POST['categoryID_fk'] 
-    ];
 
-    addProduct($connection, $productData);
+    if(isset($_POST['productId'])) {
+
+        // Assuming your form fields have names like the ones in the HTML form
+        $productData = [
+            'productID' => $_POST['productId'],
+            'imagePath' => $_FILES['imagePath']['name'], // Assuming imagePath is the name attribute for the file input
+            'barcode' => $_POST['barcode'],
+            'label' => $_POST['label'],
+            'fullDescription' => $_POST['fullDescription'],
+            'minQuantity' => $_POST['minQuantity'],
+            'stockQuantity' => $_POST['stockQuantity'],
+            'buyingPrice' => $_POST['buyingPrice'],
+            'finalPrice' => $_POST['finalPrice'],
+            'offerPrice' => $_POST['offerPrice'],
+            'categoryID_fk' => $_POST['categoryID_fk'] 
+        ];
+
+        updateProduct($connection, $productData);
+
+    } else {
+
+        // Assuming your form fields have names like the ones in the HTML form
+        $productData = [
+            'imagePath' => $_FILES['imagePath']['name'], // Assuming imagePath is the name attribute for the file input
+            'barcode' => $_POST['barcode'],
+            'label' => $_POST['label'],
+            'fullDescription' => $_POST['fullDescription'],
+            'minQuantity' => $_POST['minQuantity'],
+            'stockQuantity' => $_POST['stockQuantity'],
+            'buyingPrice' => $_POST['buyingPrice'],
+            'finalPrice' => $_POST['finalPrice'],
+            'offerPrice' => $_POST['offerPrice'],
+            'categoryID_fk' => $_POST['categoryID_fk'] 
+        ];
+
+        addProduct($connection, $productData);
+    }
+
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
@@ -159,7 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         
         
         if(isset($_GET['hide_product_id'])) {
-            header('Refresh: 1; url=products_manager.php');
+            header('Refresh: 1; url=products_management.php');
         }
         
         
@@ -173,6 +242,40 @@ function addProduct($connection, $productData) {
 
     // Escape and sanitize input data to prevent SQL injection
     $productID = uniqid();
+    $imagePath = mysqli_real_escape_string($connection, $productData['imagePath']);
+    $barcode = mysqli_real_escape_string($connection, $productData['barcode']);
+    $label = mysqli_real_escape_string($connection, $productData['label']);
+    $fullDescription = mysqli_real_escape_string($connection, $productData['fullDescription']);
+    $minQuantity = floatval($productData['minQuantity']);
+    $stockQuantity = intval($productData['stockQuantity']);
+    $buyingPrice = floatval($productData['buyingPrice']);
+    $finalPrice = floatval($productData['finalPrice']);
+    $offerPrice = isset($productData['offerPrice']) ? floatval($productData['offerPrice']) : null;
+    $categoryID_fk = mysqli_real_escape_string($connection, $productData['categoryID_fk']);
+
+    // SQL query to insert data into the Product table
+    $query = "INSERT INTO Product (productID, imagePath, barcode, label, full_description, minQuantity, stockQuantity, buyingPrice, finalPrice, offerPrice, categoryID_fk)
+              VALUES ('$productID', '$imagePath', '$barcode', '$label', '$fullDescription', $minQuantity, $stockQuantity, $buyingPrice, $finalPrice, ";
+    $query .= $offerPrice ? "$offerPrice, " : "NULL, ";
+    $query .= "'$categoryID_fk')";
+
+    // Execute the query
+    $result = $connection->query($query);
+
+    // Check if the query was successful
+    if ($result) {
+        echo "Product added successfully!";
+    } else {
+        echo "Error adding product: " . $connection->error;
+    }
+}
+
+
+function updateProduct($connection, $productData) {
+    // Assuming $connection is your database connection object
+
+    // Escape and sanitize input data to prevent SQL injection
+    $productID = $productData['productID'];
     $imagePath = mysqli_real_escape_string($connection, $productData['imagePath']);
     $barcode = mysqli_real_escape_string($connection, $productData['barcode']);
     $label = mysqli_real_escape_string($connection, $productData['label']);
