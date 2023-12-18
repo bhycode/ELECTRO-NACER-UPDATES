@@ -66,6 +66,16 @@ session_start();
 if(!isset($_SESSION["current_id"])) {
         header("Location: index.php");
         exit;
+} else {
+    // Check if the user account is not active
+    // $userID = $_SESSION["current_id"];
+    $userID = 'id1';
+    $query = "SELECT * FROM User WHERE userID = '$userID' and isActiveAccount = true;";
+    $userDataReturned = $connection->query($query);
+    if($userDataReturned->num_rows == 0) {
+        header("Location: index.php");
+        exit;
+    }
 }
 
 

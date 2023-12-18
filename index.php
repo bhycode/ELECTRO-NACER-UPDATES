@@ -69,7 +69,6 @@
                 $query = "SELECT * FROM User WHERE email = '$loginEmail' AND userPassword = '$loginPassword'";
                 $result = $connection->query($query);
                 $userID = $connection->query("SELECT userID from User where email = '$loginEmail' AND userPassword = '$loginPassword'");
-                echo "<script>alert('hhh');</script>";
 
                 session_start();
                 $_SESSION["current_id"] = $userID;
